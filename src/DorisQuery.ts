@@ -59,4 +59,9 @@ export class DorisQuery extends MysqlQuery {
     templates.types.binary = 'STRING';  // Doris doesn't support BLOB
     return templates;
   }
+
+  public timeStampCast(value: string) {
+    // Doris uses DATETIME type, so no need to cast
+    return value;
+  }
 } 
