@@ -20,9 +20,9 @@ This driver has been tested with Apache Doris 2.0+ and is compatible with its My
 First install the package:
 
 ```bash
-npm install --save @cubejs-backend/doris-driver
+npm install --save @starghost/doris-driver
 # or
-yarn add @cubejs-backend/doris-driver
+yarn add @starghost/doris-driver
 ```
 
 ## Configuration
@@ -43,6 +43,60 @@ module.exports = new CubejsServer({
     ssl: process.env.CUBEJS_DB_SSL ? { rejectUnauthorized: false } : undefined,
   })
 });
+```
+
+## Docker Support
+
+This driver is available as a custom Cube.js Docker image that includes the Doris driver pre-installed and configured.
+
+### Using the Docker Image
+
+The repository includes a `docker-compose.yml` that sets up a complete environment with:
+- Custom Cube.js image with Doris driver pre-installed
+- Apache Doris FE (Frontend) node
+- Apache Doris BE (Backend) node
+- Persistent volumes for data storage
+
+To use it:
+
+```bash
+# Build and start the environment
+docker-compose up -d --build
+
+# View logs
+docker-compose logs -f
+
+# Stop the environment
+docker-compose down -v  # Add -v to remove volumes
+```
+
+### Building Your Own Image
+
+The included Dockerfile builds a custom Cube.js image with the Doris driver pre-installed. You can use this as a base for your own custom images:
+
+```dockerfile
+FROM cubejs/cube:latest
+
+# Install the Doris driver
+RUN npm install -g @starghost/doris-driver
+```
+
+Or build from scratch using the provided Dockerfile:
+
+```bash
+# Build the image
+docker build -t my-cubejs-doris .
+
+# Run the container
+docker run -p 4000:4000 -p 3000:3000 \
+  -e CUBEJS_DEV_MODE=true \
+  -e CUBEJS_DB_HOST=doris-host \
+  -e CUBEJS_DB_PORT=9030 \
+  -e CUBEJS_DB_NAME=test \
+  -e CUBEJS_DB_USER=root \
+  -e CUBEJS_DB_PASS= \
+  -e CUBEJS_API_SECRET=secret \
+  my-cubejs-doris
 ```
 
 ## Environment Variables

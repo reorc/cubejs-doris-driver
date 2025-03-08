@@ -1,0 +1,50 @@
+version: '3.5'
+
+services:
+  cube:
+    build: .
+    ports:
+      - "4000:4000"  # Cube.js API
+      - "3000:3000"  # Cube.js Playground
+    environment:
+      - CUBEJS_DEV_MODE=true
+      - CUBEJS_DB_HOST=doris-fe
+      - CUBEJS_DB_PORT=9030
+      - CUBEJS_DB_NAME=test
+      - CUBEJS_DB_USER=root
+      - CUBEJS_DB_PASS=
+      - CUBEJS_API_SECRET=secret
+    volumes:
+      - cube_data:/cube/conf
+    depends_on:
+      - doris-fe
+      - doris-be
+
+  doris-fe:
+    image: apache/doris:2.0.2-fe-x86_64
+    hostname: doris-fe
+    ports:
+      - "8030:8030"
+      - "9030:9030"
+    environment:
+      - FE_SERVERS=doris-fe:9010
+      - DORIS_ADMIN_USER=root
+      - DORIS_ADMIN_PASSWORD=
+    volumes:
+      - doris_fe_data:/opt/apache-doris/fe/doris-meta
+
+  doris-be:
+    image: apache/doris:2.0.2-be-x86_64
+    hostname: doris-be
+    depends_on:
+      - doris-fe
+    environment:
+      - FE_SERVERS=doris-fe:9010
+      - BE_ADDR=doris-be:9050
+    volumes:
+      - doris_be_data:/opt/apache-doris/be/storage
+
+volumes:
+  cube_data:
+  doris_fe_data:
+  doris_be_data: 
