@@ -1,11 +1,11 @@
 {
-  "name": "@cubejs-backend/doris-driver",
+  "name": "@starghost/doris-driver",
   "description": "Cube.js Doris database driver",
   "author": "Viet Pham",
   "version": "0.1.0",
   "repository": {
     "type": "git",
-    "url": "https://github.com/recurve-ai/cubejs-doris-driver.git"
+    "url": "git+https://github.com/recurve-ai/cubejs-doris-driver.git"
   },
   "engines": {
     "node": "^14.0.0 || ^16.0.0 || >=17.0.0"
