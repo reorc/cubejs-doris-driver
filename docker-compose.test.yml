@@ -1,0 +1,15 @@
+version: '3.5'
+
+services:
+  test:
+    image: node:16
+    volumes:
+      - .:/usr/src/app
+    working_dir: /usr/src/app
+    environment:
+      - TEST_DB_HOST=host.docker.internal
+      - TEST_DB_PORT=9030
+      - TEST_DB_USER=root
+      - TEST_DB_PASS=
+      - TEST_DB_NAME=test
+    command: yarn test 
