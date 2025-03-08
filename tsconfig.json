@@ -1,10 +1,5 @@
 {
   "extends": "./tsconfig.base.json",
-  "references": [
-    {
-      "path": "../../../../../../Documents/projects/cube/branches/master/packages/cubejs-base-driver"
-    }
-  ],
   "include": [
     "src",
     "test"

@@ -10,7 +10,7 @@ const GRANULARITY_TO_INTERVAL: Record<GranularityType, (date: string) => string>
   minute: (date: string) => `DATE_FORMAT(${date}, '%Y-%m-%dT%H:%i:00.000')`,
   second: (date: string) => `DATE_FORMAT(${date}, '%Y-%m-%dT%H:%i:%S.000')`,
   month: (date: string) => `DATE_FORMAT(${date}, '%Y-%m-01T00:00:00.000')`,
-  quarter: (date: string) => `DATE_ADD('1900-01-01', INTERVAL TIMESTAMPDIFF(QUARTER, '1900-01-01', ${date}) QUARTER)`,
+  quarter: (date: string) => `DATE_FORMAT(DATE_SUB(${date}, INTERVAL (MONTH(${date}) - 1) % 3 MONTH), '%Y-%m-01T00:00:00.000')`,
   year: (date: string) => `DATE_FORMAT(${date}, '%Y-01-01T00:00:00.000')`
 };
 
