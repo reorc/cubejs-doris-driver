@@ -20,7 +20,7 @@ describe('DorisDriver Integration', () => {
   test('should connect to database', async () => {
     const result = await driver.testConnection();
     expect(result).toBeDefined();
-  });
+  }, 30000);
 
   test('should create and drop test table', async () => {
     const tableName = 'test_table';
@@ -56,7 +56,7 @@ describe('DorisDriver Integration', () => {
     // Drop test table
     const dropQuery = `DROP TABLE IF EXISTS ${tableName}`;
     await driver.query(dropQuery, []);
-  });
+  }, 30000);
 
   test('should handle time zones correctly', async () => {
     const query = `
@@ -64,10 +64,14 @@ describe('DorisDriver Integration', () => {
     `;
     const result = await driver.query(query, []);
     expect(result[0].converted_time).toBe('2024-01-01 08:00:00');
-  });
+  }, 30000);
 
   test('should handle different data types', async () => {
     const tableName = 'test_types';
+    
+    // Drop table if exists
+    await driver.query(`DROP TABLE IF EXISTS ${tableName}`, []);
+
     const createTableQuery = `
       CREATE TABLE IF NOT EXISTS ${tableName} (
         int_col INT,
@@ -106,7 +110,8 @@ describe('DorisDriver Integration', () => {
     expect(result[0].bool_col).toBe(1);
     expect(result[0].datetime_col).toBe('2024-01-01 12:34:56');
 
+    // Drop test table
     const dropQuery = `DROP TABLE IF EXISTS ${tableName}`;
     await driver.query(dropQuery, []);
-  });
+  }, 30000);
 }); 

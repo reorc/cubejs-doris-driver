@@ -229,7 +229,32 @@ export class DorisDriver extends BaseDriver implements DriverInterface {
   public async query(query: string, values: unknown[]) {
     return this.withConnection(async (conn) => {
       await this.setTimeZone(conn);
-      return conn.execute(query, values);
+      if (!query.trim().toLowerCase().startsWith('select')) {
+        return conn.execute(query, values);
+      }
+      return new Promise((resolve, reject) => {
+        conn.query(query, values, (err, rows, fields) => {
+          if (err) {
+            reject(err);
+          } else {
+            if (fields) {
+              const types = this.mapFieldsToGenericTypes(<FieldInfo[]>fields);
+              if (Array.isArray(rows)) {
+                rows = rows.map(row => {
+                  const newRow = { ...row };
+                  types.forEach(({ name, type }) => {
+                    if (type === 'string' && typeof newRow[name] === 'number') {
+                      newRow[name] = newRow[name].toString();
+                    }
+                  });
+                  return newRow;
+                });
+              }
+            }
+            resolve(rows);
+          }
+        });
+      });
     });
   }
 
@@ -300,9 +325,10 @@ export class DorisDriver extends BaseDriver implements DriverInterface {
         dbType = MySqlNativeToDorisType[field.type];
       }
 
+      const genericType = this.toGenericType(dbType);
       return {
         name: field.name,
-        type: this.toGenericType(dbType)
+        type: genericType === 'decimal' ? 'string' : genericType
       };
     });
   }
@@ -342,6 +368,9 @@ export class DorisDriver extends BaseDriver implements DriverInterface {
         return false;
       }
     }
+    if (genericType === 'decimal' && typeof value === 'number') {
+      return value.toString();
+    }
     return super.toColumnValue(value, genericType);
   }
 
@@ -365,9 +394,9 @@ export class DorisDriver extends BaseDriver implements DriverInterface {
       const batchSize = 1000; // TODO make dynamic?
       for (let j = 0; j < Math.ceil(tableData.rows.length / batchSize); j++) {
         const currentBatchSize = Math.min(tableData.rows.length - j * batchSize, batchSize);
-        const indexArray = Array.from({ length: currentBatchSize }, (v, i) => i);
+        const indexArray = Array.from({ length: currentBatchSize }, (_v, i) => i);
         const valueParamPlaceholders =
-          indexArray.map(i => `(${columns.map((c, paramIndex) => this.param(paramIndex + i * columns.length)).join(', ')})`).join(', ');
+          indexArray.map(i => `(${columns.map((_c, paramIndex) => this.param(paramIndex + i * columns.length)).join(', ')})`).join(', ');
         const params = indexArray.map(i => columns
           .map(c => this.toColumnValue(tableData.rows[i + j * batchSize][c.name], c.type)))
           .reduce((a, b) => a.concat(b), []);

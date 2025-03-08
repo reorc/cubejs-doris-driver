@@ -1,7 +1,9 @@
 import moment from 'moment-timezone';
 import { MysqlQuery } from '@cubejs-backend/schema-compiler';
 
-const GRANULARITY_TO_INTERVAL = {
+type GranularityType = 'day' | 'week' | 'hour' | 'minute' | 'second' | 'month' | 'quarter' | 'year';
+
+const GRANULARITY_TO_INTERVAL: Record<GranularityType, (date: string) => string> = {
   day: (date: string) => `DATE_FORMAT(${date}, '%Y-%m-%dT00:00:00.000')`,
   week: (date: string) => `DATE_FORMAT(DATE_ADD('1900-01-01', INTERVAL TIMESTAMPDIFF(WEEK, '1900-01-01', ${date}) WEEK), '%Y-%m-%dT00:00:00.000')`,
   hour: (date: string) => `DATE_FORMAT(${date}, '%Y-%m-%dT%H:00:00.000')`,
@@ -19,7 +21,10 @@ export class DorisQuery extends MysqlQuery {
 
   // Override timeGroupedColumn to use Doris's optimized date functions if available
   public timeGroupedColumn(granularity: string, dimension: string) {
-    return `CAST(${GRANULARITY_TO_INTERVAL[granularity](dimension)} AS DATETIME)`;
+    if (!GRANULARITY_TO_INTERVAL[granularity as GranularityType]) {
+      throw new Error(`Unsupported granularity: ${granularity}`);
+    }
+    return `CAST(${GRANULARITY_TO_INTERVAL[granularity as GranularityType](dimension)} AS DATETIME)`;
   }
 
   public subtractInterval(date: string, interval: string) {
