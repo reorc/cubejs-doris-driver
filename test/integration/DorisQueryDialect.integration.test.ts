@@ -63,11 +63,11 @@ describe('DorisQuery Dialect Integration', () => {
     
     try {
       driver = new DorisDriver({
-        host: process.env.CUBEJS_DB_HOST || 'localhost',
-        port: Number(process.env.CUBEJS_DB_PORT) || 9030,
-        user: process.env.CUBEJS_DB_USER || 'root',
-        password: process.env.CUBEJS_DB_PASS || '',
-        database: process.env.CUBEJS_DB_NAME || 'test'
+        host: process.env.TEST_DB_HOST || 'localhost',
+        port: Number(process.env.TEST_DB_PORT) || 9030,
+        user: process.env.TEST_DB_USER || 'root',
+        password: process.env.TEST_DB_PASS || '',
+        database: process.env.TEST_DB_NAME || 'test'
       });
 
       console.log('Testing connection...');
