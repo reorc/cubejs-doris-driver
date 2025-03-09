@@ -20,9 +20,9 @@ This driver has been tested with Apache Doris 2.0+ and is compatible with its My
 First install the package:
 
 ```bash
-npm install --save @starghost/doris-driver
+npm install --save doris-cubejs-driver
 # or
-yarn add @starghost/doris-driver
+yarn add doris-cubejs-driver
 ```
 
 ## Configuration
