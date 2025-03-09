@@ -1,4 +1,3 @@
 FROM cubejs/cube:latest
 
-# Install the Doris driver
-RUN npm install -g @starghost/doris-driver
+RUN npm install doris-cubejs-driver@0.1.0

@@ -1,5 +1,5 @@
 {
-  "name": "@starghost/doris-driver",
+  "name": "doris-cubejs-driver",
   "description": "Cube.js Doris database driver",
   "author": "Viet Pham",
   "version": "0.1.0",
@@ -10,8 +10,8 @@
   "engines": {
     "node": "^14.0.0 || ^16.0.0 || >=17.0.0"
   },
-  "main": "dist/src/index.js",
-  "typings": "dist/src/index.d.ts",
+  "main": "dist/index.js",
+  "typings": "dist/index.d.ts",
   "scripts": {
     "build": "rm -rf dist && npm run tsc",
     "tsc": "tsc",
@@ -23,8 +23,7 @@
     "lint:fix": "eslint --fix src/* test/* --ext .ts"
   },
   "files": [
-    "dist/src",
-    "index.js"
+    "dist"
   ],
   "dependencies": {
     "@cubejs-backend/base-driver": "^1.2.19",

@@ -78,7 +78,7 @@ The included Dockerfile builds a custom Cube.js image with the Doris driver pre-
 FROM cubejs/cube:latest
 
 # Install the Doris driver
-RUN npm install -g @starghost/doris-driver
+RUN npm install -g doris-cubejs-driver
 ```
 
 Or build from scratch using the provided Dockerfile:
