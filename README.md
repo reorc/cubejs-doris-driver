@@ -30,9 +30,9 @@ yarn add doris-cubejs-driver
 You can configure the driver by providing a set of connection options:
 
 ```javascript
-const CubejsServer = require('@cubejs-backend/server');
+const { DorisDriver } = require('doris-cubejs-driver');
 
-module.exports = new CubejsServer({
+module.exports = {
   driverFactory: () => new DorisDriver({
     host: process.env.CUBEJS_DB_HOST,
     port: process.env.CUBEJS_DB_PORT,
@@ -42,7 +42,7 @@ module.exports = new CubejsServer({
     // Optional: SSL configuration
     ssl: process.env.CUBEJS_DB_SSL ? { rejectUnauthorized: false } : undefined,
   })
-});
+};
 ```
 
 ## Docker Support
