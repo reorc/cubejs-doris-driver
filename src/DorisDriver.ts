@@ -1,5 +1,5 @@
 /**
- * @copyright Cube Dev, Inc.
+ * @copyright ReOrc, Inc.
  * @license Apache-2.0
  * @fileoverview The `DorisDriver` and related types declaration.
  */

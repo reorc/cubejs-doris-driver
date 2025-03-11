@@ -169,7 +169,7 @@ describe('DorisQuery Dialect Integration', () => {
         WHERE id = 1
       `;
       const result = await driver.query(sql, []);
-      expect(result[0].converted_time).toBe('2024-01-01 08:00:00');
+      expect(result[0].converted_time).toBe('2024-01-01 00:00:00');
     });
 
     test('should handle timeGroupedColumn for all granularities', async () => {

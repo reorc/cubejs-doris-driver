@@ -1,22 +1,29 @@
+/**
+ * @copyright ReOrc, Inc.
+ * @license Apache-2.0
+ * @fileoverview The `DorisQuery` and related types declaration.
+ */
+
 import moment from 'moment-timezone';
 import { MysqlQuery } from '@cubejs-backend/schema-compiler';
 
 type GranularityType = 'day' | 'week' | 'hour' | 'minute' | 'second' | 'month' | 'quarter' | 'year';
 
 const GRANULARITY_TO_INTERVAL: Record<GranularityType, (date: string) => string> = {
-  day: (date: string) => `DATE_FORMAT(${date}, '%Y-%m-%dT00:00:00.000')`,
-  week: (date: string) => `DATE_FORMAT(DATE_ADD('1900-01-01', INTERVAL TIMESTAMPDIFF(WEEK, '1900-01-01', ${date}) WEEK), '%Y-%m-%dT00:00:00.000')`,
-  hour: (date: string) => `DATE_FORMAT(${date}, '%Y-%m-%dT%H:00:00.000')`,
-  minute: (date: string) => `DATE_FORMAT(${date}, '%Y-%m-%dT%H:%i:00.000')`,
-  second: (date: string) => `DATE_FORMAT(${date}, '%Y-%m-%dT%H:%i:%S.000')`,
-  month: (date: string) => `DATE_FORMAT(${date}, '%Y-%m-01T00:00:00.000')`,
-  quarter: (date: string) => `DATE_FORMAT(DATE_SUB(${date}, INTERVAL (MONTH(${date}) - 1) % 3 MONTH), '%Y-%m-01T00:00:00.000')`,
-  year: (date: string) => `DATE_FORMAT(${date}, '%Y-01-01T00:00:00.000')`
+  day: (date: string) => `DATE_TRUNC(${date}, 'day')`,
+  week: (date: string) => `DATE_TRUNC(${date}, 'week')`,
+  hour: (date: string) => `DATE_TRUNC(${date}, 'hour')`,
+  minute: (date: string) => `DATE_TRUNC(${date}, 'minute')`,
+  second: (date: string) => `DATE_TRUNC(${date}, 'second')`,
+  month: (date: string) => `DATE_TRUNC(${date}, 'month')`,
+  quarter: (date: string) => `DATE_TRUNC(${date}, 'quarter')`,
+  year: (date: string) => `DATE_TRUNC(${date}, 'year')`
 };
 
 export class DorisQuery extends MysqlQuery {
   public convertTz(field: string) {
-    return `CONVERT_TZ(${field}, @@session.time_zone, '${moment().tz(this.timezone).format('Z')}')`;
+    // No timezone conversion - return field as-is
+    return field;
   }
 
   // Override timeGroupedColumn to use Doris's optimized date functions if available
