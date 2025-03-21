@@ -53,6 +53,8 @@ export class DorisQuery extends MysqlQuery {
 
   public sqlTemplates() {
     const templates = super.sqlTemplates();
+    templates.functions.LEAST = 'LEAST({{ args_concat }})';
+    templates.functions.GREATEST = 'GREATEST({{ args_concat }})';
     // Customize SQL templates for Doris if needed
     templates.quotes.identifiers = '`';
     templates.quotes.escape = '\\`';
