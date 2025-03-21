@@ -29,7 +29,8 @@ jest.mock('@cubejs-backend/schema-compiler', () => {
       return {
         quotes: {},
         expressions: {},
-        types: {}
+        types: {},
+        functions: {}
       };
     }
   }
@@ -130,6 +131,9 @@ describe('DorisQuery Dialect Integration', () => {
           ) ENGINE = OLAP
           DUPLICATE KEY(id)
           DISTRIBUTED BY HASH(id) BUCKETS 1
+          PROPERTIES (
+            "replication_num" = "1"
+          )
         `, []);
         console.log('Table created successfully');
 
@@ -313,6 +317,63 @@ describe('DorisQuery Dialect Integration', () => {
       // Verify expressions
       expect(templates.expressions.ilike).toBeUndefined();
       expect(templates.expressions.sort).toBe('{{ expr }} IS NULL {% if nulls_first %}DESC{% else %}ASC{% endif %}, {{ expr }} {% if asc %}ASC{% else %}DESC{% endif %}');
+
+      // Verify functions
+      expect(templates.functions.LEAST).toBe('LEAST({{ args_concat }})');
+      expect(templates.functions.GREATEST).toBe('GREATEST({{ args_concat }})');
+    });
+
+    test('should handle LEAST and GREATEST functions', async () => {
+      const tableName = 'test_functions';
+      
+      try {
+        await driver.query(`
+          CREATE TABLE ${tableName} (
+            id INT,
+            value1 INT,
+            value2 INT,
+            value3 INT
+          ) ENGINE = OLAP
+          DUPLICATE KEY(id)
+          DISTRIBUTED BY HASH(id) BUCKETS 1
+          PROPERTIES (
+            "replication_num" = "1"
+          )
+        `, []);
+
+        await driver.query(`
+          INSERT INTO ${tableName} (id, value1, value2, value3)
+          VALUES 
+            (1, 10, 20, 30),
+            (2, 50, 30, 40),
+            (3, 15, 25, 20)
+        `, []);
+
+        // Test LEAST function
+        const leastResult = await driver.query(`
+          SELECT LEAST(value1, value2, value3) as min_value
+          FROM ${tableName}
+          ORDER BY id
+        `, []);
+        
+        expect(leastResult[0].min_value).toBe(10);
+        expect(leastResult[1].min_value).toBe(30);
+        expect(leastResult[2].min_value).toBe(15);
+
+        // Test GREATEST function
+        const greatestResult = await driver.query(`
+          SELECT GREATEST(value1, value2, value3) as max_value
+          FROM ${tableName}
+          ORDER BY id
+        `, []);
+        
+        expect(greatestResult[0].max_value).toBe(30);
+        expect(greatestResult[1].max_value).toBe(50);
+        expect(greatestResult[2].max_value).toBe(25);
+
+      } finally {
+        await driver.query(`DROP TABLE IF EXISTS ${tableName}`, []);
+      }
     });
 
     test('should handle sorting with nulls', async () => {
@@ -326,6 +387,9 @@ describe('DorisQuery Dialect Integration', () => {
           ) ENGINE = OLAP
           DUPLICATE KEY(id)
           DISTRIBUTED BY HASH(id) BUCKETS 1
+          PROPERTIES (
+            "replication_num" = "1"
+          )
         `, []);
 
         await driver.query(`
