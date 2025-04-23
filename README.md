@@ -164,6 +164,40 @@ yarn unit
 yarn integration
 ```
 
+## Build and Publishing
+
+This package includes a script to automate the build and publishing process:
+
+```bash
+# Build and publish the package
+yarn release
+
+# Build only (no publishing)
+yarn release:build
+
+# Publish only (no build)
+yarn release:publish
+```
+
+You can also specify version increments that will be based on the latest published version:
+
+```bash
+# Increment patch version (0.1.4 -> 0.1.5)
+yarn release:patch
+
+# Increment minor version (0.1.4 -> 0.2.0)
+yarn release:minor
+
+# Increment major version (0.1.4 -> 1.0.0)
+yarn release:major
+```
+
+The script automatically:
+- Compares the local version with the latest published version
+- Uses the latest version as the base for incrementation
+- Handles version synchronization between local and remote
+- Ensures you're authenticated with npm before publishing
+
 ## Contributing
 
 1. Fork it

@@ -2,10 +2,10 @@
   "name": "doris-cubejs-driver",
   "description": "Cube.js Doris database driver",
   "author": "Viet Pham",
-  "version": "0.1.2",
+  "version": "0.1.6",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/recurve-ai/cubejs-doris-driver.git"
+    "url": "git+https://github.com/reorc/cubejs-doris-driver.git"
   },
   "engines": {
     "node": "^14.0.0 || ^16.0.0 || >=17.0.0"
@@ -20,7 +20,13 @@
     "unit": "jest --coverage --verbose dist/test/unit",
     "integration": "jest --coverage --verbose dist/test/integration",
     "lint": "eslint src/* test/* --ext .ts",
-    "lint:fix": "eslint --fix src/* test/* --ext .ts"
+    "lint:fix": "eslint --fix src/* test/* --ext .ts",
+    "release": "./build-publish.sh",
+    "release:build": "./build-publish.sh --build-only",
+    "release:publish": "./build-publish.sh --publish-only",
+    "release:patch": "./build-publish.sh --version=patch",
+    "release:minor": "./build-publish.sh --version=minor",
+    "release:major": "./build-publish.sh --version=major"
   },
   "files": [
     "dist"

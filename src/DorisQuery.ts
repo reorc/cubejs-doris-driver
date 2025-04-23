@@ -59,6 +59,7 @@ export class DorisQuery extends MysqlQuery {
     templates.quotes.identifiers = '`';
     templates.quotes.escape = '\\`';
     templates.expressions.sort = '{{ expr }} IS NULL {% if nulls_first %}DESC{% else %}ASC{% endif %}, {{ expr }} {% if asc %}ASC{% else %}DESC{% endif %}';
+    templates.expressions.timestamp_literal = 'CAST(\'{{ value }}\' AS DATETIME)';
     delete templates.expressions.ilike;
     templates.types.string = 'VARCHAR';
     templates.types.text = 'STRING';  // Doris uses STRING instead of TEXT
