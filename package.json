@@ -2,7 +2,7 @@
   "name": "doris-cubejs-driver",
   "description": "Cube.js Doris database driver",
   "author": "Viet Pham",
-  "version": "0.1.6",
+  "version": "0.1.7",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/reorc/cubejs-doris-driver.git"
